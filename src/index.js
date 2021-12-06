@@ -7,7 +7,7 @@ const sanitizeFile = (conn, config, ext) => {
   if (!conn.file) conn.file = `${conn.name}.${ext}`
   if (!path.isAbsolute(conn.file)) {
     const parts = path.parse(conn.file)
-    conn.file = `${config.dir.db}/data/${parts.base}`
+    conn.file = `${config.dataDir}/data/${parts.base}`
   }
   if (_.isEmpty(path.parse(conn.file).ext)) conn.file += `.${ext}`
 }
@@ -20,9 +20,10 @@ const sanitizeSqlite3 = (conn, config) => {
   sanitizeFile(conn, config, 'sqlite3')
 }
 
-const schemaTransformer = (file, schema, config = {}) => {
+const schemaTransformer = (file, schema, options = {}) => {
   schema.name = pascalCase(path.parse(file).name)
-  const db = _.find(config.db.connections, { name: schema.connection })
+  schema.alias = schema.alias || _.kebabCase(schema.name)
+  const db = _.find(options.connections, { name: schema.connection })
   if (!db) throw new Error(`Invalid connection "${schema.connection}" in schema "${schema.name}"`)
   // TODO: validate columns
   return schema
@@ -37,7 +38,7 @@ const plugin = fp(async (fastify, options) => {
   const ds = {}
   const model = {}
 
-  for (const db of config.db.connections) {
+  for (const db of options.connections) {
     fastify.log.debug(`+ Datasource "${db.name}"`)
     if (db.connector === 'memory') ds[db.name] = new DS(db)
     else {
@@ -48,7 +49,7 @@ const plugin = fp(async (fastify, options) => {
     }
   }
 
-  for (const schema of config.db.schemas) {
+  for (const schema of options.schemas) {
     fastify.log.debug(`+ Model "${schema.name}" on "${schema.connection}"`)
     const def = _.reduce(schema.columns, (o, c) => {
       o[c.name] =  _.omit(c, ['name'])
@@ -60,41 +61,42 @@ const plugin = fp(async (fastify, options) => {
 
   if (config.mode === 'build') await require('./build.js')(fastify, ds, model)
 
-  fastify.decorate('datasource', ds)
-  fastify.decorate('model', model)
+  const helper = {
+    getModelByAlias: require('./lib/get-model-by-alias'),
+    formatRest: require('./lib/format-rest')
+  }
+  fastify.decorate('ndutDb', { ds, model, helper })
 })
 
 module.exports = async function (fastify) {
-  fastify.log.info('Initialize "ndut-db"')
   const { config } = fastify
-  config.dir.db = config.dir.data + '/db'
+  const ndutConfig = config.nduts[_.findIndex(config.nduts, { name: 'ndut-db' })]
+  ndutConfig.dataDir = config.dir.data + '/ndutDb'
   for (const d of ['schema', 'fixture', 'dump', 'data']) {
-    await fs.ensureDir(config.dir.db + '/' + d)
+    await fs.ensureDir(ndutConfig.dataDir + '/' + d)
   }
-  config.db = {
-    connections: [],
-    schemas: []
-  }
+  ndutConfig.connections = []
+  ndutConfig.schemas = []
 
   try {
-    config.db.connections = await requireBase(config.dir.db + '/connection', fastify)
-    if (_.isPlainObject(config.db.connections)) config.db.connections = [config.db.connections]
-    const duplicates = findDuplicate(config.db.connections, 'name')
+    ndutConfig.connections = await requireBase(ndutConfig.dataDir + '/connection', fastify)
+    if (_.isPlainObject(ndutConfig.connections)) ndutConfig.connections = [ndutConfig.connections]
+    const duplicates = findDuplicate(ndutConfig.connections, 'name')
     if (duplicates.length > 0) throw new Error(`Duplicate found for connection "${humanJoin(duplicates)}"`)
-    for (const conn of config.db.connections) {
-      if (conn.connector.includes('sqlite')) sanitizeSqlite3(conn, config)
-      else if (conn.connector.includes('memory')) sanitizeMemory(conn, config)
+    for (const conn of ndutConfig.connections) {
+      if (conn.connector.includes('sqlite')) sanitizeSqlite3(conn, ndutConfig)
+      else if (conn.connector.includes('memory')) sanitizeMemory(conn, ndutConfig)
     }
   } catch (err) {
     fatal(err)
   }
   try {
-    config.db.schemas = await requireBaseDeep(config.dir.db + '/schema', schemaTransformer, { transformer: config })
-    const duplicates = findDuplicate(config.db.schemas, 'name')
+    ndutConfig.schemas = await requireBaseDeep(ndutConfig.dataDir + '/schema', schemaTransformer, { transformer: ndutConfig })
+    const duplicates = findDuplicate(ndutConfig.schemas, 'name')
     if (duplicates.length > 0) throw new Error(`Duplicate found for schema "${humanJoin(duplicates)}"`)
   } catch (err) {
     fatal(err)
   }
 
-  return { plugin }
+  return { plugin, options: ndutConfig }
 }

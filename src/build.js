@@ -17,8 +17,9 @@ module.exports = async function (fastify, ds, model) {
   const migration = {}
   const modelNames = Object.keys(model)
   const models = config.args.includes('*') ? modelNames : config.args
+  const ndutConfig = config.nduts[_.findIndex(config.nduts, { name: 'ndut-db' })] || {}
   _.each(models, m => {
-    const schema = _.find(config.db.schemas, { name: m })
+    const schema = _.find(ndutConfig.schemas, { name: m })
     if (!schema) fatal(`Invalid/unknown model "${m}"`)
     if (!migration[schema.connection]) migration[schema.connection] = []
     migration[schema.connection].push(m)
@@ -28,7 +29,7 @@ module.exports = async function (fastify, ds, model) {
       fastify.log.debug(`+ Rebuild database "${m}" on ${migration[m].length} model(s)`)
       await ds[m].automigrate(migration[m])
       for (const name of migration[m]) {
-        const files = await fastGlob(config.dir.db + `/fixture/${name}.{json,jsonl}`)
+        const files = await fastGlob(ndutConfig.dataDir + `/fixture/${name}.{json,jsonl}`)
         if (files.length === 0) {
           fastify.log.debug(`- No fixture found for "${name}" - skipped!`)
         } else if (files.length > 1) {
