@@ -20,23 +20,23 @@ module.exports = async function (fastify, ds, model) {
   const ndutConfig = config.nduts[_.findIndex(config.nduts, { name: 'ndut-db' })] || {}
   _.each(models, m => {
     const schema = _.find(ndutConfig.schemas, { name: m })
-    if (!schema) fatal(`Invalid/unknown model "${m}"`)
+    if (!schema) fatal(`Invalid/unknown model '${m}'`)
     if (!migration[schema.connection]) migration[schema.connection] = []
     migration[schema.connection].push(m)
   })
   try {
     for (const m of Object.keys(migration)) {
-      fastify.log.debug(`+ Rebuild database "${m}" on ${migration[m].length} model(s)`)
+      fastify.log.debug(`+ Rebuild database '${m}' on ${migration[m].length} model(s)`)
       await ds[m].automigrate(migration[m])
       for (const name of migration[m]) {
         const files = await fastGlob(ndutConfig.dataDir + `/fixture/${name}.{json,jsonl}`)
         if (files.length === 0) {
-          fastify.log.debug(`- No fixture found for "${name}" - skipped!`)
+          fastify.log.debug(`- No fixture found for '${name}' - skipped!`)
         } else if (files.length > 1) {
-          fastify.log.debug(`- Fixture "${name}.{json,jsonl}" must be unique - skipped!`)
+          fastify.log.debug(`- Fixture '${name}.{json,jsonl}' must be unique - skipped!`)
         } else {
           await importFixture(files[0], handler, { handler: { model: model[name] } })
-          fastify.log.debug(`+ Fixture "${name}" loaded successfully`)
+          fastify.log.debug(`+ Fixture '${name}' loaded successfully`)
         }
       }
     }

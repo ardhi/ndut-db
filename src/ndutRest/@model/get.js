@@ -2,7 +2,7 @@ const { _, getNdutConfig } = require('ndut-helper')
 
 module.exports = {
   schema: {
-    description: 'Get list of a model\'s records',
+    description: 'Get records. Use query string to filter, sort and pagination',
     tags: ['DB'],
     params: {
       type: 'object',
@@ -33,7 +33,7 @@ module.exports = {
       try {
         where = JSON.parse(request.query[restConfig.queryKey.query])
       } catch (err) {
-        throw new this.Boom.Boom(`Can't parse datasource query`)
+        throw new Error(`Can't parse datasource query`)
       }
     }
     let order = request.query[restConfig.queryKey.sort]
