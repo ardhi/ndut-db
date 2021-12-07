@@ -27,8 +27,11 @@ module.exports = fp(async function (fastify, options) {
   for (const schema of options.schemas) {
     fastify.log.debug(`+ Model '${schema.name}' on '${schema.dataSource}'`)
     const props = schema.properties
-    const opts = _.omit(schema, ['properties', 'acls', 'base', 'http', 'remoting'])
-    if (config.mode === 'build') opts.forceId = false
+    const opts = _.omit(schema, ['properties', 'acls', 'base', 'http', 'remoting', 'override', 'feature', 'ndut'])
+    if (config.mode === 'build') {
+      opts.forceId = false
+      _.set(schema, 'feature.deletedAt', false)
+    }
     const m = builder.define(schema.name, props, opts)
     extendTimestamp(builder, m, schema)
     m.attachTo(ds[schema.dataSource])

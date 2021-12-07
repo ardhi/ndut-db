@@ -7,6 +7,7 @@ module.exports = function (file, schema, options = {}) {
     schema.name = pascalCase(options.ndut.prefix + ' ' + path.parse(file).name)
     schema.alias = _.kebabCase(schema.name)
     schema.dataSource = 'default'
+    schema.ndut = options.ndut.name
   } else {
     schema.name = pascalCase(path.parse(file).name)
     schema.alias = schema.alias || _.kebabCase(schema.name)

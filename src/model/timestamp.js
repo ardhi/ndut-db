@@ -1,63 +1,36 @@
 // based on: https://github.com/clovis-maniguet/loopback-timestamp-mixin/blob/master/time-stamp.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true })
-  } else {
-    obj[key] = value;
-  }
-  return obj
-}
+const { _ } = require('ndut-helper')
 
 module.exports = function (builder, model, schema) {
-  if (schema.createdAt) builder.defineProperty(schema.name, 'createdAt', {
+  const created = _.get(schema, 'feature.createdAt')
+  const updated = _.get(schema, 'feature.updatedAt')
+  const deleted = _.get(schema, 'feature.deletedAt')
+  if (created) builder.defineProperty(schema.name, 'createdAt', {
     type: Date,
-    required: false,
-    defaultFn: 'now',
-    mysql: {
-      columnName: 'created_at',
-      default: 'CURRENT_TIMESTAMP',
-      dataType: 'timestamp'
-    }
+    required: false
   })
-  if (schema.updatedAt) builder.defineProperty(schema.name, 'updatedAt', {
+  if (updated) builder.defineProperty(schema.name, 'updatedAt', {
     type: Date,
-    required: false,
-    mysql: {
-      columnName: 'updated_at',
-      dataType: 'timestamp',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'Y'
-    }
+    required: false
   })
-  if (schema.deletedAt) builder.defineProperty(schema.name, 'deletedAt', {
+  if (deleted) builder.defineProperty(schema.name, 'deletedAt', {
     type: Date,
-    required: false,
-
-    mysql: {
-      columnName: 'deleted_at',
-      dataType: 'timestamp',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'Y'
-    }
+    required: false
   })
-  if (schema.properties.createdAt || schema.properties.updatedAt) {
+  if (created || updated) {
     model.observe('before save', (ctx, next) => {
       if (ctx.options && ctx.options.skipUpdatedAt) return next()
       if (ctx.instance) {
-        if (ctx.isNewInstance && schema.properties.createdAt) ctx.instance.createdAt = new Date()
-        if (schema.properties.updatedAt) ctx.instance.updatedAt = new Date()
+        if (ctx.isNewInstance && created) ctx.instance.createdAt = new Date()
+        if (updated) ctx.instance.updatedAt = new Date()
       } else {
-        if (schema.properties.updatedAt) ctx.data.updatedAt = new Date()
+        if (updated) ctx.data.updatedAt = new Date()
       }
       return next()
     })
   }
 
-  if (schema.properties.deletedAt) {
+  if (deleted) {
     model.observe('before delete', (ctx, next) => {
       model.updateAll(ctx.where, { deletedAt: new Date()}).then(function () {
         next(null)

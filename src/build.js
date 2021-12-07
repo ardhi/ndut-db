@@ -1,13 +1,14 @@
-const { aneka, _, importFixture, fastGlob } = require('ndut-helper')
+const { aneka, _, importFixture, fastGlob, getNdutConfig } = require('ndut-helper')
 const { fatal } = aneka
+const path = require('path')
 
 const handler = async (records = [], { model }) => {
-  /*
-  const tx = await model.beginTransaction()
-  await model.create(records, { transaction: tx })
-  await tx.commit()
-  */
-  await model.create(records)
+  // TODO: transaction, maybe?
+  try {
+    await model.create(records)
+  } catch (err) {
+    fatal(err)
+  }
 }
 
 module.exports = async function (fastify, ds, model) {
@@ -17,31 +18,40 @@ module.exports = async function (fastify, ds, model) {
   const migration = {}
   const modelNames = Object.keys(model)
   const models = config.args.includes('*') ? modelNames : config.args
-  const ndutConfig = config.nduts[_.findIndex(config.nduts, { name: 'ndut-db' })] || {}
+  const dbConfig = getNdutConfig(fastify, 'ndut-db')
   _.each(models, m => {
-    const schema = _.find(ndutConfig.schemas, { name: m })
+    const schema = _.find(dbConfig.schemas, { name: m })
     if (!schema) fatal(`Invalid/unknown model '${m}'`)
     if (!migration[schema.dataSource]) migration[schema.dataSource] = []
-    migration[schema.dataSource].push(m)
+    migration[schema.dataSource].push({
+      name: m,
+      alias: schema.alias,
+      ndut: schema.ndut,
+      overrideBuiltinFixture: _.get(schema, 'override.builtinFixture')
+    })
   })
-  try {
-    for (const m of Object.keys(migration)) {
-      fastify.log.debug(`+ Rebuild database '${m}' on ${migration[m].length} model(s)`)
-      await ds[m].automigrate(migration[m])
-      for (const name of migration[m]) {
-        const files = await fastGlob(ndutConfig.dataDir + `/fixture/${name}.{json,jsonl}`)
-        if (files.length === 0) {
-          fastify.log.debug(`- No fixture found for '${name}' - skipped!`)
-        } else if (files.length > 1) {
-          fastify.log.debug(`- Fixture '${name}.{json,jsonl}' must be unique - skipped!`)
-        } else {
-          await importFixture(files[0], handler, { handler: { model: model[name] } })
-          fastify.log.debug(`+ Fixture '${name}' loaded successfully`)
-        }
+  for (const id of Object.keys(migration)) {
+    fastify.log.debug(`+ Rebuild database '${id}' on ${migration[id].length} model(s)`)
+    await ds[id].automigrate(_.map(migration[id], 'name'))
+    // do we have ndut's fixture?
+    for (const m of migration[id]) {
+      if (!m.ndut) continue
+      const nc = getNdutConfig(fastify, m.ndut)
+      const base = m.alias.slice(nc.prefix.length + 1)
+      files = await fastGlob(`${nc.dir}/ndutDb/fixture/${base}.{json,jsonl}`)
+      for (const f of files) {
+        await importFixture(f, handler, { handler: { model: model[m.name] } })
+        fastify.log.debug(`+ Builtin fixture '${path.basename(f)}' loaded successfully`)
       }
     }
-  } catch (err) {
-    fatal(err)
+    for (const m of migration[id]) {
+      const files = await fastGlob(`${dbConfig.dataDir}/fixture/${m.name}.{json,jsonl}`)
+      for (const f of files) {
+        if (m.overrideBuiltinFixture) await model[m.name].remove()
+        await importFixture(f, handler, { handler: { model: model[m.name] } })
+        fastify.log.debug(`+ Fixture '${m.name}${path.extname(f)}' loaded successfully`)
+      }
+    }
   }
   fastify.log.info('Build process completed')
   process.exit()

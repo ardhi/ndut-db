@@ -27,28 +27,24 @@ module.exports = async function (fastify) {
     else if (conn.connector.includes('memory')) sanitizeMemory(conn, options)
   }
 
-  // model schemas
+  // nduts schemas
   for (const n of config.nduts) {
     options.ndut = n
-    let schemas = await requireBaseDeep(n.dir + '/ndutDb', transformer, { transformer: options })
-    options.schemas = _.concat(options.schemas, schemas)
-    schemas = await requireBaseDeep(n.dir + '/src/ndutDb', transformer, { transformer: options })
+    let schemas = await requireBaseDeep(n.dir + '/ndutDb/schema', transformer, { transformer: options })
     options.schemas = _.concat(options.schemas, schemas)
     delete options.ndut
   }
+
+  // app schemas
   const schemas = await requireBaseDeep(options.dataDir + '/schema', transformer, { transformer: options })
   for (const s of schemas) {
     const idx = _.findIndex(options.schemas, { name: s.name })
     if (idx > -1) {
-      /*
-      const merged = _.merge(_.cloneDeep(options.schemas[idx]), _.omit(s, ['columns']))
-      _.each(s.columns, c => {
-        const col = _.find(merged.columns, { name: c.name })
-        if (col) col = _.merge(col, _.omit(c, ['type']))
-        else merged.columns.push(c)
-      })
-      */
-      options.schemas[idx] = _.merge(_.cloneDeep(options.schemas[idx]), s)
+      if (_.get(options.schemas[idx], 'override.schema') === false) {
+        // do nothing !!!
+      } else {
+        options.schemas[idx] = _.merge(_.cloneDeep(options.schemas[idx]), s)
+      }
     } else options.schemas.push(s)
   }
   duplicates = findDuplicate(options.schemas, 'name')
