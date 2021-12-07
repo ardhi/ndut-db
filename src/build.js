@@ -21,8 +21,8 @@ module.exports = async function (fastify, ds, model) {
   _.each(models, m => {
     const schema = _.find(ndutConfig.schemas, { name: m })
     if (!schema) fatal(`Invalid/unknown model '${m}'`)
-    if (!migration[schema.connection]) migration[schema.connection] = []
-    migration[schema.connection].push(m)
+    if (!migration[schema.dataSource]) migration[schema.dataSource] = []
+    migration[schema.dataSource].push(m)
   })
   try {
     for (const m of Object.keys(migration)) {

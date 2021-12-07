@@ -12,17 +12,17 @@ module.exports = async function (fastify) {
   for (const d of ['schema', 'fixture', 'dump', 'data']) {
     await fs.ensureDir(options.dataDir + '/' + d)
   }
-  options.connections = []
+  options.dataSources = []
   options.schemas = []
 
-  // datasource connections
-  options.connections = await requireBase(options.dataDir + '/connection', fastify)
-  if (_.isPlainObject(options.connections)) options.connections = [options.connections]
-  let duplicates = findDuplicate(options.connections, 'name')
-  if (duplicates.length > 0) throw new Error(`Duplicate found for connection '${humanJoin(duplicates)}'`)
-  if (!_.find(options.connections, { name: 'default' }))
-    throw new Error(`No 'default' connection found. You need to explicitly name one of your database connections your 'default' connection`)
-  for (const conn of options.connections) {
+  // datasource dataSources
+  options.dataSources = await requireBase(options.dataDir + '/datasource', fastify)
+  if (_.isPlainObject(options.dataSources)) options.dataSources = [options.dataSources]
+  let duplicates = findDuplicate(options.dataSources, 'name')
+  if (duplicates.length > 0) throw new Error(`Duplicate found for data source '${humanJoin(duplicates)}'`)
+  if (!_.find(options.dataSources, { name: 'default' }))
+    throw new Error(`No 'default' data source found. You need to explicitly name one of your sources 'default'`)
+  for (const conn of options.dataSources) {
     if (conn.connector.includes('sqlite')) sanitizeSqlite3(conn, options)
     else if (conn.connector.includes('memory')) sanitizeMemory(conn, options)
   }

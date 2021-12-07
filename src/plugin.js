@@ -13,7 +13,7 @@ module.exports = fp(async function (fastify, options) {
   const ds = {}
   const model = {}
 
-  for (const db of options.connections) {
+  for (const db of options.dataSources) {
     fastify.log.debug(`+ Datasource '${db.name}'`)
     if (db.connector === 'memory') ds[db.name] = new DataSource(db)
     else {
@@ -25,11 +25,13 @@ module.exports = fp(async function (fastify, options) {
   }
 
   for (const schema of options.schemas) {
-    fastify.log.debug(`+ Model '${schema.name}' on '${schema.connection}'`)
+    fastify.log.debug(`+ Model '${schema.name}' on '${schema.dataSource}'`)
     const props = schema.properties
-    const m = builder.define(schema.name, props, { forceId: false })
+    const opts = _.omit(schema, ['properties', 'acls', 'base', 'http', 'remoting'])
+    if (config.mode === 'build') opts.forceId = false
+    const m = builder.define(schema.name, props, opts)
     extendTimestamp(builder, m, schema)
-    m.attachTo(ds[schema.connection])
+    m.attachTo(ds[schema.dataSource])
     model[schema.name] = m
   }
 
