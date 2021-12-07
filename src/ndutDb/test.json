@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "name": {
+      "type": "String",
+      "required": false,
+      "length": 64,
+      "precision": null,
+      "scale": null
+    },
+    "total": {
+      "type": "Number",
+      "required": false,
+      "length": null,
+      "precision": 32,
+      "scale": 0
+    }
+  }
+}

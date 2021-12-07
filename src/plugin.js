@@ -25,10 +25,13 @@ module.exports = fp(async function (fastify, options) {
 
   for (const schema of options.schemas) {
     fastify.log.debug(`+ Model '${schema.name}' on '${schema.connection}'`)
+    /*
     const def = _.reduce(schema.columns, (o, c) => {
       o[c.name] =  _.omit(c, ['name'])
       return o
     }, {})
+    */
+    const def = schema.properties
     model[schema.name] = builder.define(schema.name, def, { forceId: false })
     model[schema.name].attachTo(ds[schema.connection])
   }

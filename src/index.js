@@ -40,13 +40,15 @@ module.exports = async function (fastify) {
   for (const s of schemas) {
     const idx = _.findIndex(options.schemas, { name: s.name })
     if (idx > -1) {
+      /*
       const merged = _.merge(_.cloneDeep(options.schemas[idx]), _.omit(s, ['columns']))
       _.each(s.columns, c => {
         const col = _.find(merged.columns, { name: c.name })
         if (col) col = _.merge(col, _.omit(c, ['type']))
         else merged.columns.push(c)
       })
-      options.schemas[idx] = merged
+      */
+      options.schemas[idx] = _.merge(_.cloneDeep(options.schemas[idx]), s)
     } else options.schemas.push(s)
   }
   duplicates = findDuplicate(options.schemas, 'name')
