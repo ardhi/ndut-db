@@ -1,9 +1,9 @@
 const { fs, aneka, _, getNdutConfig } = require('ndut-helper')
 const path = require('path')
 const { requireBase, requireBaseDeep, findDuplicate, humanJoin } = aneka
-const schemaTransformer = require('./schema-transformer')
+const transformer = require('./model/transformer')
 const plugin = require('./plugin')
-const { sanitizeSqlite3, sanitizeMemory } = require('./sanitizer')
+const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
 module.exports = async function (fastify) {
   const { config } = fastify
@@ -30,13 +30,13 @@ module.exports = async function (fastify) {
   // model schemas
   for (const n of config.nduts) {
     options.ndut = n
-    let schemas = await requireBaseDeep(n.dir + '/ndutDb', schemaTransformer, { transformer: options })
+    let schemas = await requireBaseDeep(n.dir + '/ndutDb', transformer, { transformer: options })
     options.schemas = _.concat(options.schemas, schemas)
-    schemas = await requireBaseDeep(n.dir + '/src/ndutDb', schemaTransformer, { transformer: options })
+    schemas = await requireBaseDeep(n.dir + '/src/ndutDb', transformer, { transformer: options })
     options.schemas = _.concat(options.schemas, schemas)
     delete options.ndut
   }
-  const schemas = await requireBaseDeep(options.dataDir + '/schema', schemaTransformer, { transformer: options })
+  const schemas = await requireBaseDeep(options.dataDir + '/schema', transformer, { transformer: options })
   for (const s of schemas) {
     const idx = _.findIndex(options.schemas, { name: s.name })
     if (idx > -1) {

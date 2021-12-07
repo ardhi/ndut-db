@@ -4,6 +4,7 @@ const { ModelBuilder, DataSource } = require('loopback-datasource-juggler')
 const getModelByAlias = require('./lib/get-model-by-alias')
 const formatRest = require('./lib/format-rest')
 const doBuild = require('./build.js')
+const extendTimestamp = require('./model/timestamp')
 
 module.exports = fp(async function (fastify, options) {
   const { config } = fastify
@@ -25,15 +26,11 @@ module.exports = fp(async function (fastify, options) {
 
   for (const schema of options.schemas) {
     fastify.log.debug(`+ Model '${schema.name}' on '${schema.connection}'`)
-    /*
-    const def = _.reduce(schema.columns, (o, c) => {
-      o[c.name] =  _.omit(c, ['name'])
-      return o
-    }, {})
-    */
-    const def = schema.properties
-    model[schema.name] = builder.define(schema.name, def, { forceId: false })
-    model[schema.name].attachTo(ds[schema.connection])
+    const props = schema.properties
+    const m = builder.define(schema.name, props, { forceId: false })
+    extendTimestamp(builder, m, schema)
+    m.attachTo(ds[schema.connection])
+    model[schema.name] = m
   }
 
   if (config.mode === 'build') await doBuild(fastify, ds, model)
