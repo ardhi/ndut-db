@@ -2,7 +2,7 @@ const { fs, aneka, _, getNdutConfig } = require('ndut-helper')
 const path = require('path')
 const { requireBase, requireBaseDeep, findDuplicate, humanJoin } = aneka
 const transformer = require('./model/transformer')
-const plugin = require('./plugin')
+const plugin = require('./lib/plugin')
 const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
 module.exports = async function (fastify) {

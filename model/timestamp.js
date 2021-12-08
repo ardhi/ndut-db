@@ -1,7 +1,7 @@
 // based on: https://github.com/clovis-maniguet/loopback-timestamp-mixin/blob/master/time-stamp.js
 const { _ } = require('ndut-helper')
 
-module.exports = function (builder, model, schema) {
+module.exports = function (fastify, builder, model, schema) {
   const created = _.get(schema, 'feature.createdAt')
   const updated = _.get(schema, 'feature.updatedAt')
   const deleted = _.get(schema, 'feature.deletedAt')
@@ -30,7 +30,7 @@ module.exports = function (builder, model, schema) {
     })
   }
 
-  if (deleted) {
+  if (deleted && fastify.config.mode !== 'build') {
     model.observe('before delete', (ctx, next) => {
       model.updateAll(ctx.where, { deletedAt: new Date()}).then(function () {
         next(null)
