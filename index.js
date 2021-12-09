@@ -31,7 +31,7 @@ module.exports = async function (fastify) {
   // nduts schemas
   for (const n of config.nduts) {
     options.ndut = n
-    let schemas = await requireBaseDeep(n.dir + '/ndutDb/schema', transformer, { transformer: options })
+    const schemas = await requireBaseDeep(n.dir + '/ndutDb/schema', transformer, { transformer: options })
     options.schemas = _.concat(options.schemas, schemas)
     delete options.ndut
   }
@@ -44,12 +44,11 @@ module.exports = async function (fastify) {
       if (_.get(options.schemas[idx], 'override.schema') === false) {
         // do nothing !!!
       } else {
-        options.schemas[idx] = _.merge(_.cloneDeep(options.schemas[idx]), s)
+        options.schemas[idx] = _.merge(_.cloneDeep(options.schemas[idx]), _.omit(s, ['file']))
       }
     } else options.schemas.push(s)
   }
   duplicates = findDuplicate(options.schemas, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for schema '${humanJoin(duplicates)}'`)
-
   return { name, plugin, options, appModes: ['serve', 'build'] }
 }

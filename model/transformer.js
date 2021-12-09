@@ -13,6 +13,7 @@ module.exports = function (file, schema, options = {}) {
     schema.alias = schema.alias || _.kebabCase(schema.name)
     schema.dataSource = schema.dataSource || 'default'
   }
+  schema.file = file
   const db = _.find(options.dataSources, { name: schema.dataSource })
   if (!db) throw new Error(`Invalid data source '${schema.dataSource}' in schema '${schema.name}'`)
   // TODO: validate columns
