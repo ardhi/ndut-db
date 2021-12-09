@@ -6,6 +6,7 @@ const plugin = require('./lib/plugin')
 const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
 module.exports = async function (fastify) {
+  const name = 'ndut-db'
   const { config } = fastify
   const options = getNdutConfig(fastify, 'ndut-db')
   options.dataDir = config.dir.data + '/ndutDb'
@@ -50,5 +51,5 @@ module.exports = async function (fastify) {
   duplicates = findDuplicate(options.schemas, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for schema '${humanJoin(duplicates)}'`)
 
-  return { plugin, options }
+  return { name, plugin, options, appModes: ['serve', 'build'] }
 }

@@ -2,6 +2,7 @@
 const { _ } = require('ndut-helper')
 
 module.exports = function (fastify, builder, model, schema) {
+  const { config } = fastify
   const created = _.get(schema, 'feature.createdAt')
   const updated = _.get(schema, 'feature.updatedAt')
   const deleted = _.get(schema, 'feature.deletedAt')
@@ -30,7 +31,7 @@ module.exports = function (fastify, builder, model, schema) {
     })
   }
 
-  if (deleted && fastify.config.mode !== 'build') {
+  if (deleted && config.appMode !== 'build') {
     model.observe('before delete', (ctx, next) => {
       model.updateAll(ctx.where, { deletedAt: new Date()}).then(function () {
         next(null)
