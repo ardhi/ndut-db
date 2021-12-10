@@ -21,7 +21,6 @@ module.exports = {
     const data = await model.findById(request.params.id)
     if (!data) throw new this.Boom.Boom('Record not found', { statusCode: 404 })
     return this.ndutDb.helper.formatRest(this, {
-      success: true,
       data
     })
   }

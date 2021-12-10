@@ -24,7 +24,6 @@ module.exports = {
     if (!existing) throw new this.Boom.Boom('Record not found', { statusCode: 404 })
     await model.remove({ id: request.params.id })
     return this.ndutDb.helper.formatRest(this, {
-      success: true,
       data: existing,
       message: 'Record successfully removed'
     })

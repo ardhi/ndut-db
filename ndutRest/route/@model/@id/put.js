@@ -25,7 +25,6 @@ module.exports = {
     await model.update({ id: request.params.id }, _.omit(request.body, 'id'))
     const data = await model.findById(request.params.id)
     return this.ndutDb.helper.formatRest(this, {
-      success: true,
       data,
       message: 'Record successfully updated'
     })

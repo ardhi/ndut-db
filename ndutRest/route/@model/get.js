@@ -46,7 +46,6 @@ module.exports = {
     const total = await model.count({ where })
     const data = await model.find({ limit, order, skip, where })
     return this.ndutDb.helper.formatRest(this, {
-      success: true,
       data,
       total,
       totalPage: Math.floor((total + limit - 1) / limit),
