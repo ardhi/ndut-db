@@ -16,7 +16,7 @@ module.exports = {
   },
   handler: async function (request, reply) {
     const restConfig = getNdutConfig(this, 'ndut-rest')
-    const model = this.ndutDb.helper.getModelByAlias(this, request.params.model)
+    const model = this.ndutDb.helper.getModelByAlias(request.params.model)
     let limit = parseInt(request.query[restConfig.queryKey.pageSize]) || restConfig.maxPageSize
     if (limit > restConfig.maxPageSize) limit = restConfig.maxPageSize
     if (limit < 1) limit = 1
@@ -45,12 +45,12 @@ module.exports = {
     }
     const total = await model.count({ where })
     const data = await model.find({ limit, order, skip, where })
-    return this.ndutDb.helper.formatRest(this, {
+    return {
       data,
       total,
       totalPage: Math.floor((total + limit - 1) / limit),
       pageSize: limit,
       page
-    })
+    }
   }
 }

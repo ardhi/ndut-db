@@ -13,11 +13,11 @@ module.exports = {
     }
   },
   handler: async function (request, reply) {
-    const model = this.ndutDb.helper.getModelByAlias(this, request.params.model)
+    const model = this.ndutDb.helper.getModelByAlias(request.params.model)
     const data = await model.create(request.body)
-    return this.ndutDb.helper.formatRest(this, {
+    return {
       data,
       message: 'Record successfully created'
-    })
+    }
   }
 }
