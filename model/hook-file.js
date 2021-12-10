@@ -10,12 +10,12 @@ module.exports = function (fastify, model, schema) {
   }
   if (fs.existsSync(file)) {
     _.forOwn(require(file), (v, k) => {
-      model.observe(k, v)
+      model.observe(k, v.bind(fastify))
     })
   }
   if (!schema.ndut && fs.existsSync(fileOrg)) {
     _.forOwn(require(fileOrg), (v, k) => {
-      model.observe(k, v)
+      model.observe(k, v.bind(fastify))
     })
   }
 }
