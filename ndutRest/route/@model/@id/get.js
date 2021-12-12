@@ -18,7 +18,7 @@ module.exports = {
   },
   handler: async function (request, reply) {
     const model = this.ndutDb.helper.getModelByAlias(request.params.model)
-    const data = await model.findById(request.params.id)
+    const data = await this.ndutDb.findById(model, request, request.params.id)
     if (!data) throw new this.Boom.Boom('Record not found', { statusCode: 404 })
     return {
       data

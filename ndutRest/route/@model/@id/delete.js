@@ -20,9 +20,9 @@ module.exports = {
   },
   handler: async function (request, reply) {
     const model = this.ndutDb.helper.getModelByAlias(request.params.model)
-    const existing = await model.findById(request.params.id)
+    const existing = await this.ndutDb.findById(model, request, request.params.id)
     if (!existing) throw new this.Boom.Boom('Record not found', { statusCode: 404 })
-    await model.remove({ id: request.params.id })
+    await this.ndutDb.remove(model, request, { id: request.params.id })
     return {
       data: existing,
       message: 'Record successfully removed'

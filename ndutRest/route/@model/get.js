@@ -38,13 +38,13 @@ module.exports = {
     }
     let order = request.query[restConfig.queryKey.sort]
     if (!order) {
-      const schema = _.find(getNdutConfig(this, 'ndut-db').schemas, { name: model.name }) || {}
+      const schema = _.find(getNdutConfig(this, 'ndut-db').schemas, { name: model }) || {}
       const keys = _.map(schema.columnns, 'name')
       const found = _.intersection(keys, ['updated_at', 'updatedAt', 'created_at', 'createdAt'])
       if (found[0]) order = `${found[0]} DESC`
     }
-    const total = await model.count({ where })
-    const data = await model.find({ limit, order, skip, where })
+    const total = await this.ndutDb.count(model, request, { where })
+    const data = await this.ndutDb.find(model, request, { limit, order, skip, where })
     return {
       data,
       total,

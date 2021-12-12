@@ -1,8 +1,7 @@
 const { fs, aneka, _, getNdutConfig } = require('ndut-helper')
-const path = require('path')
 const { requireBase, requireBaseDeep, findDuplicate, humanJoin } = aneka
 const transformer = require('./model/transformer')
-const plugin = require('./lib/plugin')
+const earlyPlugin = require('./lib/early-plugin')
 const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
 module.exports = async function (fastify) {
@@ -50,5 +49,6 @@ module.exports = async function (fastify) {
   }
   duplicates = findDuplicate(options.schemas, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for schema '${humanJoin(duplicates)}'`)
-  return { name, plugin, options, appModes: ['serve', 'build'] }
+
+  return { name, earlyPlugin, options, appModes: ['serve', 'build'] }
 }

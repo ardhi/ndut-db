@@ -14,7 +14,7 @@ module.exports = {
   },
   handler: async function (request, reply) {
     const model = this.ndutDb.helper.getModelByAlias(request.params.model)
-    const data = await model.create(request.body)
+    const data = await this.ndutDb.create(model, request, request.body)
     return {
       data,
       message: 'Record successfully created'
