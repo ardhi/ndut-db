@@ -1,5 +1,3 @@
-const { _ } = require('ndut-helper')
-
 module.exports = {
   schema: {
     description: 'Remove record by its ID',
@@ -19,6 +17,7 @@ module.exports = {
     }
   },
   handler: async function (request, reply) {
+    const { _ } = this.ndut.helper
     const model = this.ndutDb.helper.getModelByAlias(request.params.model)
     const existing = await this.ndutDb.findById(model, request, request.params.id)
     if (!existing) throw new this.Boom.Boom('Record not found', { statusCode: 404 })

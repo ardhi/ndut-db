@@ -1,5 +1,3 @@
-const { _, getNdutConfig } = require('ndut-helper')
-
 module.exports = {
   schema: {
     description: 'Get records. Use query string to filter, sort and pagination',
@@ -15,6 +13,7 @@ module.exports = {
     }
   },
   handler: async function (request, reply) {
+    const { _, getNdutConfig } = this.ndut.helper
     const restConfig = getNdutConfig(this, 'ndut-rest')
     const model = this.ndutDb.helper.getModelByAlias(request.params.model)
     let limit = parseInt(request.query[restConfig.queryKey.pageSize]) || restConfig.maxPageSize

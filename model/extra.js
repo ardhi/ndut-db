@@ -1,7 +1,5 @@
-const { _ } = require('ndut-helper')
-
 module.exports = function (fastify, builder, model, schema) {
-  const { config } = fastify
+  const { _ } = fastify.ndut.helper
   if (_.get(schema, 'feature.siteId')) builder.defineProperty(schema.name, 'siteId', {
     type: Number,
     required: false,

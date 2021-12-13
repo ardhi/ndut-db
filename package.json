@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/ardhi/ndut-db#readme",
   "dependencies": {
-    "loopback-datasource-juggler": "^4.26.0",
-    "ndut-helper": "file:../ndut-helper"
+    "fastify-plugin": "^3.0.0",
+    "loopback-datasource-juggler": "^4.26.0"
   }
 }

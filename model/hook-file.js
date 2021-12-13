@@ -1,8 +1,7 @@
-const { _, fs, getNdutConfig } = require('ndut-helper')
 const path = require('path')
 
 module.exports = function (fastify, model, schema) {
-  const { config } = fastify
+  const { _, fs, getNdutConfig } = fastify.ndut.helper
   let fileOrg = `${getNdutConfig(fastify, 'ndut-db').dataDir}/hook/${schema.name}.js`
   let file = fileOrg
   if (schema.ndut) {

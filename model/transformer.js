@@ -1,8 +1,8 @@
-const { _, aneka } = require('ndut-helper')
-const { pascalCase } = aneka
 const path = require('path')
 
 module.exports = function (file, schema, options = {}) {
+  const { _, aneka } = this.ndut.helper
+  const { pascalCase } = aneka
   if (options.ndut) {
     schema.name = pascalCase(options.ndut.prefix + ' ' + path.parse(file).name)
     schema.alias = _.kebabCase(schema.name)

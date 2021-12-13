@@ -1,8 +1,7 @@
-const { _, fs, getNdutConfig } = require('ndut-helper')
 const path = require('path')
 
 module.exports = function (fastify, datasource, model) {
-  const { config } = fastify
+  const { _ } = fastify.ndut.helper
 
   fastify.addHook('onClose', async (instance, done) => {
     for (const k of _.keys(datasource)) {

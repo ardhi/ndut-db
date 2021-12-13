@@ -1,7 +1,7 @@
 // based on: https://github.com/clovis-maniguet/loopback-timestamp-mixin/blob/master/time-stamp.js
-const { _ } = require('ndut-helper')
 
 module.exports = function (fastify, builder, model, schema) {
+  const { _ } = fastify.ndut.helper
   const { config } = fastify
   const created = _.get(schema, 'feature.createdAt')
   const updated = _.get(schema, 'feature.updatedAt')
