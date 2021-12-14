@@ -8,15 +8,18 @@ module.exports = function (fastify, builder, model, schema) {
   const deleted = _.get(schema, 'feature.deletedAt')
   if (created) builder.defineProperty(schema.name, 'createdAt', {
     type: Date,
-    required: false
+    required: false,
+    index: true
   })
   if (updated) builder.defineProperty(schema.name, 'updatedAt', {
     type: Date,
-    required: false
+    required: false,
+    index: true
   })
   if (deleted) builder.defineProperty(schema.name, 'deletedAt', {
     type: Date,
-    required: false
+    required: false,
+    index: true
   })
   if (created || updated) {
     model.observe('before save', (ctx, next) => {

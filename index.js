@@ -10,14 +10,14 @@ module.exports = async function (fastify) {
   const { config } = fastify
   const options = getNdutConfig(fastify, 'ndut-db')
   options.dataDir = config.dir.data + '/ndutDb'
-  for (const d of ['schema', 'fixture', 'dump', 'data']) {
+  for (const d of ['dump', 'data']) {
     await fs.ensureDir(options.dataDir + '/' + d)
   }
   options.dataSources = []
   options.schemas = []
 
   // datasource dataSources
-  options.dataSources = await requireBase(options.dataDir + '/datasource', fastify)
+  options.dataSources = await requireBase(config.dir.base + '/ndutDb/datasource', fastify)
   if (_.isPlainObject(options.dataSources)) options.dataSources = [options.dataSources]
   let duplicates = findDuplicate(options.dataSources, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for data source '${humanJoin(duplicates)}'`)
@@ -37,7 +37,7 @@ module.exports = async function (fastify) {
   }
 
   // app schemas
-  const schemas = await requireBaseDeep(options.dataDir + '/schema', transformer, { transformer: options })
+  const schemas = await requireBaseDeep(config.dir.base + '/ndutDb/schema', transformer, { transformer: options })
   for (const s of schemas) {
     const idx = _.findIndex(options.schemas, { name: s.name })
     if (idx > -1) {
