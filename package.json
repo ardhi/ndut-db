@@ -1,7 +1,7 @@
 {
   "name": "ndut-db",
-  "version": "0.0.1",
-  "description": "DB Connectors & Models for Ndut Framework",
+  "version": "0.1.0",
+  "description": "Datasource & Models for Ndut Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,10 +12,12 @@
   },
   "keywords": [
     "ndut",
-    "db",
+    "database",
+    "datasource",
     "connector",
     "model",
-    "datasource"
+    "orm",
+    "odm"
   ],
   "author": "Ardhi Lukianto <ardhi@lukianto.com>",
   "license": "MIT",
