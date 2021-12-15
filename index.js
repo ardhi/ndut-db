@@ -1,10 +1,9 @@
 let transformer = require('./model/transformer')
-const earlyPlugin = require('./lib/early-plugin')
 const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
 module.exports = async function (fastify) {
   transformer = transformer.bind(fastify)
-  const { fs, aneka, _, getNdutConfig } = fastify.ndut.helper
+  const { fs, fp, aneka, _, getNdutConfig } = fastify.ndut.helper
   const { requireBase, requireBaseDeep, findDuplicate, humanJoin } = aneka
   const name = 'ndut-db'
   const { config } = fastify
@@ -50,6 +49,8 @@ module.exports = async function (fastify) {
   }
   duplicates = findDuplicate(options.schemas, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for schema '${humanJoin(duplicates)}'`)
+
+  const earlyPlugin = fp(require('./lib/early-plugin'))
 
   return { name, earlyPlugin, options, appModes: ['serve', 'build'] }
 }
