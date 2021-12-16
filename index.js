@@ -1,30 +1,34 @@
 let transformer = require('./model/transformer')
 const { sanitizeSqlite3, sanitizeMemory } = require('./model/sanitizer')
 
-module.exports = async function (fastify) {
-  transformer = transformer.bind(fastify)
-  const { fs, fp, aneka, _, getNdutConfig } = fastify.ndut.helper
+module.exports = async function () {
+  transformer = transformer.bind(this)
+  const { fs, fp, aneka, _, getNdutConfig } = this.ndut.helper
   const { requireBase, requireBaseDeep, findDuplicate, humanJoin } = aneka
   const name = 'ndut-db'
-  const { config } = fastify
-  const options = getNdutConfig(fastify, 'ndut-db')
+  const { config } = this
+  const options = getNdutConfig('ndut-db')
   options.dataDir = config.dir.data + '/ndutDb'
   for (const d of ['dump', 'data']) {
     await fs.ensureDir(options.dataDir + '/' + d)
   }
-  options.dataSources = []
+  options.dataSources = [{
+    name: 'memory',
+    connector: 'memory'
+  }]
   options.schemas = []
 
   // datasource dataSources
-  options.dataSources = await requireBase(config.dir.base + '/ndutDb/datasource', fastify)
-  if (_.isPlainObject(options.dataSources)) options.dataSources = [options.dataSources]
+  let ds = await requireBase(config.dir.base + '/ndutDb/datasource', this)
+  if (_.isPlainObject(ds)) ds = [ds]
+  options.dataSources = _.concat(options.dataSources, ds)
   let duplicates = findDuplicate(options.dataSources, 'name')
   if (duplicates.length > 0) throw new Error(`Duplicate found for data source '${humanJoin(duplicates)}'`)
   if (!_.find(options.dataSources, { name: 'default' }))
     throw new Error(`No 'default' data source found. You need to explicitly name one of your sources 'default'`)
   for (const conn of options.dataSources) {
-    if (conn.connector.includes('sqlite')) sanitizeSqlite3.call(fastify, conn, options)
-    else if (conn.connector.includes('memory')) sanitizeMemory.call(fastify, conn, options)
+    if (conn.connector.includes('sqlite')) sanitizeSqlite3.call(this, conn, options)
+    else if (conn.connector.includes('memory')) sanitizeMemory.call(this, conn, options)
   }
 
   // nduts schemas

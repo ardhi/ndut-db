@@ -1,0 +1,18 @@
+{
+  "dataSource": "memory",
+  "properties": {
+    "model": {
+      "type": "String"
+    },
+    "name": {
+      "type": "String"
+    },
+    "column": {
+      "type": "String"
+    }
+  },
+  "expose": {
+    "list": true,
+    "get": true
+  }
+}

@@ -1,11 +1,11 @@
-module.exports = function (fastify, builder, model, schema) {
-  const { _ } = fastify.ndut.helper
+module.exports = function (builder, model, schema) {
+  const { _ } = this.ndut.helper
   // TODO: can only be updated by Admins
   if (_.get(schema, 'feature.siteId')) builder.defineProperty(schema.name, 'siteId', {
     type: Number,
     required: false,
     index: true,
-    precision: 0,
+    scale: 0,
     default: 0
   })
   // TODO: can only be updated by Admins
