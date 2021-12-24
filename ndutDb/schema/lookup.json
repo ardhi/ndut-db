@@ -1,7 +1,7 @@
 {
   "dataSource": "memory",
   "properties": {
-    "ndut": {
+    "model": {
       "type": "String"
     },
     "column": {
