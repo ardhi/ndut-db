@@ -1,13 +1,16 @@
 {
   "dataSource": "memory",
   "properties": {
-    "model": {
-      "type": "String"
-    },
-    "name": {
+    "ndut": {
       "type": "String"
     },
     "column": {
+      "type": "String"
+    },
+    "value": {
+      "type": "String"
+    },
+    "name": {
       "type": "String"
     }
   },
