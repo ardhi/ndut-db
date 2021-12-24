@@ -19,7 +19,7 @@ module.exports = async function () {
   options.schemas = []
 
   // datasource dataSources
-  let ds = await requireBase(config.dir.base + '/ndutDb/datasource', this)
+  let ds = await requireBase(options.dataDir + '/datasource', this)
   if (_.isPlainObject(ds)) ds = [ds]
   options.dataSources = _.concat(options.dataSources, ds)
   let duplicates = findDuplicate(options.dataSources, 'name')
