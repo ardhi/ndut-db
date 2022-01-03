@@ -4,7 +4,7 @@ module.exports = function (file, schema, options = {}) {
   const { _, aneka } = this.ndut.helper
   const { pascalCase } = aneka
   if (options.ndut) {
-    schema.name = pascalCase(options.ndut.prefix + ' ' + path.parse(file).name)
+    schema.name = pascalCase(options.ndut.alias + ' ' + path.parse(file).name)
     schema.alias = _.kebabCase(schema.name)
     schema.ndut = options.ndut.name
   } else {
