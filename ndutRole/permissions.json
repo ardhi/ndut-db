@@ -1,0 +1,80 @@
+[
+  {
+    "type": "rest",
+    "subject": "/:model",
+    "action": "read",
+    "conditions": {
+      "access": { "$in": ["user"] },
+      "model": { "$nin": ["auth-user", "role-team", "role-team-user", "role-rule", "site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model",
+    "action": "read",
+    "conditions": {
+      "access": { "$in": ["admin"] },
+      "model": { "$nin": ["site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model/:id",
+    "action": "read",
+    "conditions": {
+      "access": { "$in": ["user"] },
+      "model": { "$nin": ["auth-user", "role-team", "role-team-user", "role-rule", "site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model/:id",
+    "action": "read",
+    "conditions": {
+      "access": { "$in": ["admin"] },
+      "model": { "$nin": ["site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model",
+    "action": "create",
+    "conditions": {
+      "access": { "$in": ["admin"] },
+      "model": { "$nin": ["site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model/:id",
+    "action": "update",
+    "conditions": {
+      "access": { "$in": ["admin"] },
+      "model": { "$nin": ["site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/:model/:id",
+    "action": "remove",
+    "conditions": {
+      "access": { "$in": ["admin"] },
+      "model": { "$nin": ["site-info"] }
+    }
+  },
+  {
+    "type": "rest",
+    "subject": "/lookup/:model",
+    "action": "read"
+  },
+  {
+    "type": "rest",
+    "subject": "/lookup/:model/:id",
+    "action": "read"
+  },
+  {
+    "type": "rest",
+    "subject": "/schema/:model",
+    "action": "read"
+  }
+]
