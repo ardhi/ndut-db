@@ -4,7 +4,6 @@
     "subject": "/:model",
     "action": "read",
     "conditions": {
-      "access": { "$in": ["user"] },
       "model": { "$nin": ["auth-user", "role-team", "role-team-user", "role-rule", "site-info"] }
     }
   },
@@ -22,7 +21,6 @@
     "subject": "/:model/:id",
     "action": "read",
     "conditions": {
-      "access": { "$in": ["user"] },
       "model": { "$nin": ["auth-user", "role-team", "role-team-user", "role-rule", "site-info"] }
     }
   },

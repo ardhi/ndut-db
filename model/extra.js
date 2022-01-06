@@ -5,7 +5,6 @@ module.exports = function (builder, model, schema) {
     type: Number,
     required: false,
     index: true,
-    scale: 0,
     default: 0
   })
   // TODO: can only be updated by Admins
