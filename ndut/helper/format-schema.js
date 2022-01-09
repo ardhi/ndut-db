@@ -24,6 +24,8 @@ module.exports = function (schema, openApi, omittedColumns = []) {
         type: 'string',
         format: 'date-time'
       }
+    } else if (item.type === 'geopoint') {
+      kvOpenApi[k] = { type: 'array' }
     } else if (item.type === 'json') {
       kvOpenApi[k] = { type: 'object' }
     } else if (item.type === 'string') {
