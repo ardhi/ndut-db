@@ -4,7 +4,7 @@ module.exports.sanitizeFile = function (conn, config, ext) {
   const { _ } = this.ndut.helper
   if (!path.isAbsolute(conn.file)) {
     const parts = path.parse(conn.file)
-    conn.file = `${config.dataDir}/data/${parts.base}`
+    conn.file = `${config.dir.data}/db/${parts.base}`
   }
   if (_.isEmpty(path.parse(conn.file).ext)) conn.file += `.${ext}`
 }

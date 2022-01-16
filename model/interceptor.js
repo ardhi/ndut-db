@@ -14,16 +14,15 @@ const build = async function (files, interceptor) {
 }
 
 module.exports = async function () {
-  const { fastGlob } = this.ndut.helper
-  const { config } = this
+  const { fastGlob, getConfig, getNdutConfig } = this.ndut.helper
+  const config = await getConfig()
   const interceptor = {}
 
-  for (const n of config.nduts) {
+  for (let n of config.nduts) {
+    n = await getNdutConfig(n)
     const files = await fastGlob(`${n.dir}/ndutDb/interceptor/*.js`)
     build.call(this, files, interceptor)
   }
-  const files = await fastGlob(`${config.dir.base}/ndutDb/interceptor/*.js`)
-  build.call(this, files, interceptor)
 
   return interceptor
 }

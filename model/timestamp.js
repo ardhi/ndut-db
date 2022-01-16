@@ -1,8 +1,8 @@
 // based on: https://github.com/clovis-maniguet/loopback-timestamp-mixin/blob/master/time-stamp.js
 
-module.exports = function (builder, model, schema) {
-  const { _ } = this.ndut.helper
-  const { config } = this
+module.exports = async function (builder, model, schema) {
+  const { _, getConfig } = this.ndut.helper
+  const config = await getConfig()
   const created = _.get(schema, 'feature.createdAt')
   const updated = _.get(schema, 'feature.updatedAt')
   const deleted = _.get(schema, 'feature.deletedAt')

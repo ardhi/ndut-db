@@ -15,9 +15,9 @@ module.exports = {
   handler: async function (request, reply) {
     const { _ } = this.ndut.helper
     const { getSchemaByAlias, getModelByAlias } = this.ndutDb.helper
-    const schema = getSchemaByAlias(request.params.model)
+    const schema = await getSchemaByAlias(request.params.model)
     if (!schema.expose.get) throw this.Boom.notFound('Resource not found')
-    const model = getModelByAlias(request.params.model)
+    const model = await getModelByAlias(request.params.model)
     const base = 'DbLookup'
     const data = await this.ndutDb.find(base, request, { where: { model, id: request.params.id } })
     if (data.length === 0) throw this.Boom.notFound('Record not found')

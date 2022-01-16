@@ -1,4 +1,4 @@
-module.exports = function (builder, model, schema) {
+module.exports = async function (builder, model, schema) {
   const { _ } = this.ndut.helper
   // TODO: can only be updated by Admins
   if (_.get(schema, 'feature.siteId')) builder.defineProperty(schema.name, 'siteId', {

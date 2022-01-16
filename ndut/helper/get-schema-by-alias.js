@@ -1,7 +1,7 @@
-module.exports = function (alias) {
-  const { _, getNdutConfig } = this.ndut.helper
-  const config = getNdutConfig('ndut-db')
-  const schema = _.find(config.schemas, { alias })
+module.exports = async function (alias) {
+  const { _ } = this.ndut.helper
+  const { schemas } = this.ndutDb
+  const schema = _.find(schemas, { alias })
   if (!schema) throw new Error(`invalid/unknown model alias '${alias}'`)
   return schema
 }
