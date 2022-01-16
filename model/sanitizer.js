@@ -1,7 +1,8 @@
 const path = require('path')
 
 module.exports.sanitizeFile = function (conn, config, ext) {
-  const { _ } = this.ndut.helper
+  const { _, fs } = this.ndut.helper
+  fs.ensureDirSync(`${config.dir.data}/db`)
   if (!path.isAbsolute(conn.file)) {
     const parts = path.parse(conn.file)
     conn.file = `${config.dir.data}/db/${parts.base}`
