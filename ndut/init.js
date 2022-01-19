@@ -14,7 +14,6 @@ const instanceHook = require('../lib/instance/hook')
 const exec = require('../lib/wrapper/exec')
 const find = require('../lib/wrapper/find')
 const findOne = require('../lib/wrapper/find-one')
-const findById = require('../lib/wrapper/find-by-id')
 const create = require('../lib/wrapper/create')
 const update = require('../lib/wrapper/update')
 const remove = require('../lib/wrapper/remove')
@@ -66,7 +65,7 @@ module.exports = async function () {
   await builtIn.call(this, model)
   const interceptor = await buildInterceptor.call(this)
   const wrapper = bindTo(this, {
-    exec, find, findOne, findById, create, update, remove, count
+    exec, find, findOne, create, update, remove, count
   })
 
   const decorator = _.merge({

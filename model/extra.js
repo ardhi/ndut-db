@@ -1,9 +1,15 @@
 module.exports = async function (builder, model, schema) {
   const { _ } = this.ndut.helper
-  // TODO: can only be updated by Admins
+  // TODO: can only be updated by SiteAdmins
   if (_.get(schema, 'feature.siteId')) builder.defineProperty(schema.name, 'siteId', {
     type: Number,
     required: false,
+    index: true,
+    default: 0
+  })
+  if (_.get(schema, 'feature.userId')) builder.defineProperty(schema.name, 'userId', {
+    type: Number,
+    required: true,
     index: true,
     default: 0
   })

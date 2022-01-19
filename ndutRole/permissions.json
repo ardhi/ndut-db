@@ -1,62 +1,23 @@
 [
   {
     "type": "rest",
-    "subject": "/:model",
-    "action": "read",
+    "subject": [
+      "/:model",
+      "/:model/:id"
+    ],
+    "action": ["read", "create", "update", "remove"],
+    "access": "admin",
     "conditions": {
-      "access": { "$in": ["admin"] },
       "model": { "$nin": ["site-info"] }
     }
   },
   {
     "type": "rest",
-    "subject": "/:model/:id",
-    "action": "read",
-    "conditions": {
-      "access": { "$in": ["admin"] },
-      "model": { "$nin": ["site-info"] }
-    }
-  },
-  {
-    "type": "rest",
-    "subject": "/:model",
-    "action": "create",
-    "conditions": {
-      "access": { "$in": ["admin"] },
-      "model": { "$nin": ["site-info"] }
-    }
-  },
-  {
-    "type": "rest",
-    "subject": "/:model/:id",
-    "action": "update",
-    "conditions": {
-      "access": { "$in": ["admin"] },
-      "model": { "$nin": ["site-info"] }
-    }
-  },
-  {
-    "type": "rest",
-    "subject": "/:model/:id",
-    "action": "remove",
-    "conditions": {
-      "access": { "$in": ["admin"] },
-      "model": { "$nin": ["site-info"] }
-    }
-  },
-  {
-    "type": "rest",
-    "subject": "/lookup/:model",
-    "action": "read"
-  },
-  {
-    "type": "rest",
-    "subject": "/lookup/:model/:id",
-    "action": "read"
-  },
-  {
-    "type": "rest",
-    "subject": "/schema/:model",
+    "subject": [
+      "/lookup/:model",
+      "/lookup/:model/:id",
+      "/schema/:model"
+    ],
     "action": "read"
   }
 ]
