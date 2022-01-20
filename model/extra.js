@@ -7,7 +7,7 @@ module.exports = async function (builder, model, schema) {
     index: true,
     default: 0
   })
-  if (_.get(schema, 'feature.userId')) builder.defineProperty(schema.name, 'userId', {
+  if (_.get(schema, 'feature.private')) builder.defineProperty(schema.name, 'userId', {
     type: Number,
     required: true,
     index: true,
