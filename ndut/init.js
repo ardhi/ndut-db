@@ -19,7 +19,7 @@ const update = require('../lib/wrapper/update')
 const remove = require('../lib/wrapper/remove')
 const count = require('../lib/wrapper/count')
 
-const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'override', 'disableAliasCall', 'file']
+const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'extend', 'disableAliasCall', 'file']
 
 module.exports = async function () {
   const { _, aneka, bindTo, getConfig } = this.ndut.helper
