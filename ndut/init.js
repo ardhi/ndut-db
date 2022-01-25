@@ -1,11 +1,10 @@
+const path = require('path')
 const { ModelBuilder, DataSource } = require('loopback-datasource-juggler')
 const collectSchemas = require('../lib/collect-schemas')
 const collectDatasources = require('../lib/collect-datasources')
 
 const doBuild = require('../lib/build')
 const buildInterceptor = require('../model/interceptor')
-const extendTimestamp = require('../model/timestamp')
-const extendExtra = require('../model/extra')
 const extendByHookFile = require('../model/hook-file')
 // instance
 const builtIn = require('../lib/instance/built-in')
@@ -22,7 +21,7 @@ const count = require('../lib/wrapper/count')
 const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'extend', 'disableAliasCall', 'file']
 
 module.exports = async function () {
-  const { _, aneka, bindTo, getConfig } = this.ndut.helper
+  const { _, aneka, bindTo, getConfig, getNdutConfig, fastGlob } = this.ndut.helper
   const { requireDeep } = aneka
   const config = await getConfig()
   await collectDatasources.call(this)
@@ -52,8 +51,16 @@ module.exports = async function () {
       opts.forceId = false
     }
     const mdl = builder.define(schema.name, props, opts)
-    await extendTimestamp.call(this, builder, mdl, schema)
-    await extendExtra.call(this, builder, mdl, schema)
+    for (const n of config.nduts) {
+      const cfg = await getNdutConfig(n)
+      const files = await fastGlob(`${cfg.dir}/ndutDb/feature/*.js`)
+      for (const f of files) {
+        const base = _.camelCase(`${cfg.instanceName === 'ndutDb' ? '' : cfg.instanceName} ${path.basename(f, '.js')}`)
+        const fn = require(f)
+        const opts = _.get(schema, `feature.${base}`)
+        if (opts) await fn.call(this, { builder, model: mdl, schema, options: opts })
+      }
+    }
     await extendByHookFile.call(this, mdl, schema)
     mdl.attachTo(ds[schema.dataSource])
     model[schema.name] = mdl
