@@ -4,19 +4,10 @@ const collectSchemas = require('../lib/collect-schemas')
 const collectDatasources = require('../lib/collect-datasources')
 
 const doBuild = require('../lib/build')
-const buildInterceptor = require('../model/interceptor')
 const extendByHookFile = require('../model/hook-file')
 // instance
 const builtIn = require('../lib/instance/built-in')
 const instanceHook = require('../lib/instance/hook')
-// wrapper
-const exec = require('../lib/wrapper/exec')
-const find = require('../lib/wrapper/find')
-const findOne = require('../lib/wrapper/find-one')
-const create = require('../lib/wrapper/create')
-const update = require('../lib/wrapper/update')
-const remove = require('../lib/wrapper/remove')
-const count = require('../lib/wrapper/count')
 
 const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'extend', 'disableAliasCall', 'file']
 
@@ -70,16 +61,8 @@ module.exports = async function () {
   if (config.appMode === 'build') await doBuild.call(this, ds, model)
 
   await builtIn.call(this, model)
-  const interceptor = await buildInterceptor.call(this)
-  const wrapper = bindTo(this, {
-    exec, find, findOne, create, update, remove, count
-  })
 
-  const decorator = _.merge({
-    dataSourceInstance: ds,
-    customSchemaKeys,
-    model,
-    interceptor
-  }, wrapper)
-  this.ndutDb = _.merge(this.ndutDb, decorator)
+  this.ndutDb.customSchemaKeys = customSchemaKeys
+  this.ndutDb.model = model
+  this.ndutDb.dataSourceInstance = ds
 }
