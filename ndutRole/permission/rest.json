@@ -1,0 +1,21 @@
+[
+  {
+    "path": [
+      "/:model",
+      "/:model/:id"
+    ],
+    "method": ["read", "create", "update", "remove"],
+    "access": "admin",
+    "metaFilter": {
+      "model": { "nin": ["site-info"] }
+    }
+  },
+  {
+    "path": [
+      "/lookup/:model",
+      "/lookup/:model/:id",
+      "/schema/:model"
+    ],
+    "method": "read"
+  }
+]

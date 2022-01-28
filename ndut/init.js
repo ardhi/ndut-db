@@ -14,7 +14,7 @@ const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'extend', 'disab
 module.exports = async function () {
   const { _, aneka, bindTo, getConfig, getNdutConfig, fastGlob } = this.ndut.helper
   const { requireDeep } = aneka
-  const config = await getConfig()
+  const config = getConfig()
   await collectDatasources.call(this)
   await collectSchemas.call(this)
 
@@ -43,7 +43,7 @@ module.exports = async function () {
     }
     const mdl = builder.define(schema.name, props, opts)
     for (const n of config.nduts) {
-      const cfg = await getNdutConfig(n)
+      const cfg = getNdutConfig(n)
       const files = await fastGlob(`${cfg.dir}/ndutDb/feature/*.js`)
       for (const f of files) {
         const base = _.camelCase(`${cfg.instanceName === 'ndutDb' ? '' : cfg.instanceName} ${path.basename(f, '.js')}`)

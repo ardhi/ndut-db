@@ -7,7 +7,7 @@ module.exports = async function ({ builder, model, schema, options }) {
       index: true
     })
   }
-  const config = await getConfig()
+  const config = getConfig()
   if (config.appMode !== 'build') {
     model.observe('before delete', (ctx, next) => {
       model.updateAll(ctx.where, { deletedAt: new Date()}).then(function () {
