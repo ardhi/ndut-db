@@ -15,7 +15,7 @@ module.exports = {
   handler: async function (request, reply) {
     const { getSchemaByAlias, formatSchema } = this.ndutDb.helper
     const schema = getSchemaByAlias(request.params.model)
-    if (!(schema.expose.list || schema.expose.get)) throw this.Boom.notFound('Resource not found')
+    if (!(schema.expose.list || schema.expose.get)) throw this.Boom.notFound('resourceNotFound')
     const columns = formatSchema(schema)
     return {
       data: {

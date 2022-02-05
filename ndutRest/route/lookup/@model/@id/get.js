@@ -16,7 +16,7 @@ module.exports = {
     const { _ } = this.ndut.helper
     const { getSchemaByAlias, getModelByAlias } = this.ndutDb.helper
     const schema = await getSchemaByAlias(request.params.model)
-    if (!schema.expose.get) throw this.Boom.notFound('Resource not found')
+    if (!schema.expose.get) throw this.Boom.notFound('resourceNotFound')
     const model = await getModelByAlias(request.params.model)
     return await this.ndutApi.helper.findOne({ model: 'DbLookup', params: { where: { model, id: request.params.id } } })
   }
