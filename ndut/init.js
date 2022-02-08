@@ -9,7 +9,7 @@ const extendByHookFile = require('../model/hook-file')
 const builtIn = require('../lib/instance/built-in')
 const instanceHook = require('../lib/instance/hook')
 
-const customSchemaKeys = ['alias', 'ndut', 'expose', 'feature', 'extend', 'disableAliasCall', 'file']
+const customSchemaKeys = ['alias', 'ndut', 'expose', 'extend', 'disableAliasCall', 'file']
 
 module.exports = async function () {
   const { _, aneka, bindTo, getConfig, getNdutConfig, fastGlob } = this.ndut.helper
