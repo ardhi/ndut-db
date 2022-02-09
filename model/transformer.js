@@ -5,7 +5,8 @@ module.exports = function (file, schema, options = {}) {
   const { pascalCase } = aneka
   const { dataSources } = this.ndutDb
   if (options.ndut) {
-    schema.name = pascalCase(options.ndut.alias + ' ' + path.parse(file).name)
+    const prefix = options.ndut.alias === 'app' ? '' : options.ndut.alias
+    schema.name = pascalCase(prefix + ' ' + path.parse(file).name)
     schema.alias = _.kebabCase(schema.name)
     schema.ndut = options.ndut.name
   } else {
