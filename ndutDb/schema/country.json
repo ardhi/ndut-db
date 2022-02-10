@@ -1,0 +1,48 @@
+{
+  "dataSource": "memory",
+  "properties": {
+    "id": {
+      "type": "String",
+      "length": 2,
+      "id": true
+    },
+    "name": {
+      "type": "String",
+      "length": 255,
+      "required": true
+    },
+    "iso3": {
+      "type": "String",
+      "length": 3,
+      "index": true
+    },
+    "phoneCode": {
+      "type": "String",
+      "length": 20,
+      "index": true
+    },
+    "capital": {
+      "type": "String",
+      "length": 50
+    },
+    "currency": {
+      "type": "String",
+      "length": 20
+    },
+    "mmsi": {
+      "type": "json"
+    },
+    "ioc": {
+      "type": "String",
+      "length": 10,
+      "index": true
+    },
+    "bbox": {
+      "type": "json"
+    }
+  },
+  "expose": {
+    "list": true,
+    "get": true
+  }
+}
