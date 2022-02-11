@@ -10,6 +10,7 @@ const instanceHook = require('../lib/instance/hook')
 module.exports = async function () {
   const { _, aneka, getConfig } = this.ndut.helper
   const { requireDeep } = aneka
+  const { importFixture } = this.ndutDb.helper
   const config = getConfig()
   await collectDatasources.call(this)
   await collectSchemas.call(this)
@@ -32,6 +33,9 @@ module.exports = async function () {
   // build memoryds
   const names = _.map(_.filter(schemas, { dataSource: 'memory' }), 'name')
   await ds.memory.automigrate(names)
+  for (const n of names) {
+    await importFixture(n, true)
+  }
 
   instanceHook.call(this)
   if (config.appMode === 'build') await doBuild.call(this)
