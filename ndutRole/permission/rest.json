@@ -14,7 +14,9 @@
     "path": [
       "/lookup/:model",
       "/lookup/:model/:id",
-      "/schema/:model"
+      "/schema/:model",
+      "/country",
+      "/country/:id"
     ],
     "method": "read"
   }

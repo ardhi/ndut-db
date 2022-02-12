@@ -1,4 +1,6 @@
 {
   "/:model": ["GET", "POST"],
-  "/:model/:id": ["GET", "PUT", "DELETE"]
+  "/:model/:id": ["GET", "PUT", "DELETE"],
+  "/country": ["GET"],
+  "/country/:id": ["GET"]
 }
