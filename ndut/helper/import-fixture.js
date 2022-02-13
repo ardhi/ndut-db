@@ -17,7 +17,8 @@ module.exports = async function (model, silent) {
   const config = getConfig()
   const cfg = getNdutConfig(schema.ndut)
   const models = this.ndutDb.model
-  const base = schema.alias.slice(cfg.alias.length + 1)
+  let base = schema.alias
+  if (cfg.alias !== 'app') base = schema.alias.slice(cfg.alias.length + 1)
   // builtin
   let files = await fastGlob(`${cfg.dir}/ndutDb/fixture/${base}.{json,jsonl}`)
   let overridden = false
