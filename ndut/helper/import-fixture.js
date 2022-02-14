@@ -10,7 +10,7 @@ const handler = async (records = [], { model, fatal }) => {
 }
 
 module.exports = async function (model, silent) {
-  const { _, fastGlob, getNdutConfig, getConfig, aneka, importDataFile } = this.ndut.helper
+  const { _, fastGlob, getNdutConfig, getConfig, aneka, importFrom } = this.ndut.helper
   const { fatal } = aneka
   const { getSchemaByName } = this.ndutDb.helper
   const schema = await getSchemaByName(model)
@@ -28,14 +28,14 @@ module.exports = async function (model, silent) {
       f = overrides[0]
       overridden = true
     }
-    await importDataFile(f, handler, { handler: { model: models[model], fatal } })
+    await importFrom(f, handler, { handler: { model: models[model], fatal } })
     if (!silent) this.log.debug(`* Builtin fixture '${path.basename(f)}' loaded successfully`)
   }
   if (overridden) return
   // additional
   files = await fastGlob(`${config.dir.base}/ndutDb/fixture/extend/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
   for (const f of files) {
-    await importDataFile(f, handler, { handler: { model: models[model], fatal } })
+    await importFrom(f, handler, { handler: { model: models[model], fatal } })
     if (!silent) this.log.debug(`* Fixture '${path.basename(f)}' loaded successfully`)
   }
 }
