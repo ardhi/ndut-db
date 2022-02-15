@@ -26,11 +26,11 @@ const handlerSingle = async function ({ model, maxRowsPerPage, compress, keep = 
     let skip = (page - 1) * maxRowsPerPage
     const result = await instance.find({ limit: maxRowsPerPage, skip })
     if (result.length === 0) break
+    page++
     const dir = `${config.dir.data}/db/backup/${model}`
     await fs.ensureDir(dir)
     const file = `${dir}/${base}.jsonl`
     await exportTo(file, result, { compress })
-    // TODO: keep max n files
     if (keep > 0) {
       const files = readdirSortTime.call(this, dir)
       while (files.length > keep) {
@@ -39,7 +39,6 @@ const handlerSingle = async function ({ model, maxRowsPerPage, compress, keep = 
         _.pullAt(files, idx)
       }
     }
-    page++
   }
 }
 
