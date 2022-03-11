@@ -3,7 +3,9 @@ const path = require('path')
 const handler = async (records = [], { model, fatal }) => {
   // TODO: transaction, maybe?
   try {
-    await model.create(records)
+    for (const r of records) {
+      await model.create(r)
+    }
   } catch (err) {
     fatal(err)
   }
