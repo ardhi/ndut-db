@@ -7,13 +7,13 @@ const doBuild = require('../lib/build')
 const builtIn = require('../lib/instance/built-in')
 const instanceHook = require('../lib/instance/hook')
 
-module.exports = async function () {
+module.exports = async function (options) {
   const { _, aneka, getConfig } = this.ndut.helper
   const { requireDeep } = aneka
   const { importFixture } = this.ndutDb.helper
   const config = getConfig()
-  await collectDatasources.call(this)
-  await collectSchemas.call(this)
+  await collectDatasources.call(this, options)
+  await collectSchemas.call(this, options)
 
   const { dataSources, schemas } = this.ndutDb
 
@@ -38,6 +38,6 @@ module.exports = async function () {
   }
 
   instanceHook.call(this)
-  if (config.appMode === 'build') await doBuild.call(this)
+  if (config.appMode === 'build') await doBuild.call(this, options)
   await builtIn.call(this)
 }

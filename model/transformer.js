@@ -13,6 +13,12 @@ module.exports = function (file, schema, options = {}) {
     schema.name = pascalCase(path.parse(file).name)
     schema.alias = schema.alias || _.kebabCase(schema.name)
   }
+  if (options.nullOnBuild) {
+    _.forOwn(schema.properties, (v, k) => {
+      if (v.id) return
+      delete schema.properties[k].required
+    })
+  }
   schema.dataSource = schema.dataSource || 'default'
   schema.file = file
   schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }

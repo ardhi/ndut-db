@@ -1,4 +1,5 @@
 {
   "name": "ndut-db",
+  "nullOnBuild": false,
   "appModes": ["serve", "build"]
 }
