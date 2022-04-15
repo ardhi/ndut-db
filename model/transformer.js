@@ -21,6 +21,7 @@ module.exports = function (file, schema, options = {}) {
   }
   schema.dataSource = schema.dataSource || 'default'
   schema.file = file
+  if (options.extend) schema.fileExtend = file
   schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }
   const db = _.find(dataSources, { name: schema.dataSource })
   if (!db) throw new Error(`Invalid data source '${schema.dataSource}' in schema '${schema.name}'`)
