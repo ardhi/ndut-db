@@ -1,19 +1,15 @@
-const path = require('path')
+  const path = require('path')
 
-const handler = async (records = [], { model, fatal }) => {
+const handler = async (records = [], { model, models, scope }) => {
   // TODO: transaction, maybe?
-  try {
-    for (const r of records) {
-      await model.create(r)
-    }
-  } catch (err) {
-    fatal(err)
+  for (const r of records) {
+    if (scope.ndutApi) await scope.ndutApi.helper.create({ model, body: r })
+    else await models[model].create(r)
   }
 }
 
 module.exports = async function (model, silent) {
   const { _, fastGlob, getNdutConfig, aneka, importFrom } = this.ndut.helper
-  const { fatal } = aneka
   const { getSchemaByName } = this.ndutDb.helper
   const schema = await getSchemaByName(model)
   const appCfg = getNdutConfig('app')
@@ -30,14 +26,14 @@ module.exports = async function (model, silent) {
       f = overrides[0]
       overridden = true
     }
-    await importFrom(f, handler, { handler: { model: models[model], fatal } })
+    await importFrom(f, handler, { handler: { model, models, scope: this } })
     if (!silent) this.log.debug(`* Builtin fixture '${path.basename(f)}' loaded successfully`)
   }
   if (overridden) return
   // additional
   files = await fastGlob(`${appCfg.dir}/ndutDb/fixture/extend/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
   for (const f of files) {
-    await importFrom(f, handler, { handler: { model: models[model], fatal } })
+    await importFrom(f, handler, { handler: { model, models, scope: this } })
     if (!silent) this.log.debug(`* Fixture '${path.basename(f)}' loaded successfully`)
   }
 }

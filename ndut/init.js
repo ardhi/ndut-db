@@ -30,6 +30,7 @@ module.exports = async function (options) {
     this.log.debug(`* Model '${schema.name}' on '${schema.dataSource}'`)
     await buildModel.call(this, schema)
   }
+  if (config.appMode === 'build') await doBuild.call(this, options)
   // build memoryds
   const names = _.map(_.filter(schemas, { dataSource: 'memory' }), 'name')
   await ds.memory.automigrate(names)
@@ -38,6 +39,5 @@ module.exports = async function (options) {
   }
 
   instanceHook.call(this)
-  if (config.appMode === 'build') await doBuild.call(this, options)
   await builtIn.call(this)
 }
