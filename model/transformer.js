@@ -13,14 +13,23 @@ module.exports = function (file, schema, options = {}) {
     schema.name = pascalCase(path.parse(file).name)
     schema.alias = schema.alias || _.kebabCase(schema.name)
   }
-  if (options.nullOnBuild) {
-    _.forOwn(schema.properties, (v, k) => {
-      if (v.id) return
-      delete schema.properties[k].required
-    })
-  }
+  _.forOwn(schema.properties, (v, k) => {
+    if (_.isString(v)) v = { type: v }
+    if (_.isString(v.type) && v.type.toLowerCase() === 'integer') {
+      v.type = Number
+      v.scale = 0
+    }
+    if (_.isString(v.type) && v.type.toLowerCase() === 'double') {
+      v.type = Number
+      if (v.scale === 0) delete v.scale
+    }
+    schema.properties[k] = v
+    if (v.id) return
+    if (options.nullOnBuild) delete schema.properties[k].required
+  })
   schema.dataSource = schema.dataSource || 'default'
   schema.file = file
+  if (_.isArray(schema.feature)) schema.feature = _.mapValues(_.keyBy(schema.feature, k => k), val => true)
   if (options.extend) schema.fileExtend = file
   schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }
   const db = _.find(dataSources, { name: schema.dataSource })
