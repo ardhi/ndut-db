@@ -29,7 +29,16 @@ module.exports = function (file, schema, options = {}) {
   })
   schema.dataSource = schema.dataSource || 'default'
   schema.file = file
-  if (_.isArray(schema.feature)) schema.feature = _.mapValues(_.keyBy(schema.feature, k => k), val => true)
+  schema.feature = schema.feature || {}
+  if (_.isArray(schema.feature)) {
+    const feats = {}
+    _.each(schema.feature, f => {
+      if (_.isString(f)) feats[f] = true
+      else if (_.isPlainObject(f) && f.name) feats[f.name] = f.options || true
+    })
+    schema.feature = feats
+  }
+  if (!schema.properties.id && !schema.feature.stringId) schema.feature.stringId = true
   if (options.extend) schema.fileExtend = file
   schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }
   const db = _.find(dataSources, { name: schema.dataSource })
