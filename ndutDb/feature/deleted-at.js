@@ -1,3 +1,5 @@
+// TODO: Module doesn't work !!
+
 module.exports = {
   properties: {
     deletedAt: {
@@ -20,7 +22,7 @@ module.exports = {
         if (ctx.query.isDeleted) return next()
         if (ctx.query.where && JSON.stringify(ctx.query.where).indexOf('isDeleted') === 1) return next()
         if (!ctx.query.where) ctx.query.where = {}
-        ctx.query.where.deletedAt = null
+        // ctx.query.where.deletedAt = { neq: null }
         next()
       })
 

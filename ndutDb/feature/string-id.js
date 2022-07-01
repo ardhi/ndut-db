@@ -2,16 +2,17 @@ module.exports = {
   properties: {
     id: {
       type: String,
-      length: 20,
+      length: 50,
       required: false,
       id: true
     }
   },
   handler: async function ({ builder, model, schema, options }) {
+    const { aneka } = this.ndut.helper
     let generateId = options.generateIdFn
     if (!generateId) {
       generateId = (item) => {
-        if (item) return item
+        if (aneka.isSet(item)) return item
         return this.ndutDb.helper.generateId(options)
       }
     }
