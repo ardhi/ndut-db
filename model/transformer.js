@@ -38,6 +38,7 @@ module.exports = function (file, schema, options = {}) {
     })
     schema.feature = feats
   }
+  schema.properties = schema.properties || {}
   if (!schema.properties.id && !schema.feature.stringId) schema.feature.stringId = true
   if (options.extend) schema.fileExtend = file
   schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }
