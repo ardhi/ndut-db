@@ -41,7 +41,7 @@ module.exports = function (file, schema, options = {}) {
   schema.properties = schema.properties || {}
   if (!schema.properties.id && !schema.feature.stringId) schema.feature.stringId = true
   if (options.extend) schema.fileExtend = file
-  schema.expose = schema.expose || { list: true, get: true, create: true, update: true, remove: true }
+  schema.expose = schema.expose || { find: true, get: true, create: true, update: true, remove: true }
   const db = _.find(dataSources, { name: schema.dataSource })
   if (!db) throw new Error(`Invalid data source '${schema.dataSource}' in schema '${schema.name}'`)
   // TODO: validate columns

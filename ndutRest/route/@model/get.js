@@ -1,5 +1,5 @@
 module.exports = async function () {
-  const { handler } = await this.ndutRest.helper.modelAsListRoute()
+  const { handler } = await this.ndutRest.helper.modelAsFindRoute()
   return {
     handler,
     schema: {

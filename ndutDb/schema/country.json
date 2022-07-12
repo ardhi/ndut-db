@@ -42,7 +42,7 @@
     }
   },
   "expose": {
-    "list": true,
+    "find": true,
     "get": true
   }
 }

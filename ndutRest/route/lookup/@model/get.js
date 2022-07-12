@@ -9,7 +9,7 @@ module.exports = {
     const { prepList } = this.ndutApi.helper
     const { translateFilter, getColumns } = this.ndutRest.helper
     const schema = await getSchemaByAlias(request.params.model)
-    if (!schema.expose.list) throw this.Boom.notFound('resourceNotFound')
+    if (!schema.expose.find) throw this.Boom.notFound('resourceNotFound')
     const model = await getModelByAlias(request.params.model)
     const base = 'DbLookup'
 
