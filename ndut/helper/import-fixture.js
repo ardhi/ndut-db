@@ -1,4 +1,4 @@
-  const path = require('path')
+const path = require('path')
 
 const handler = async (records = [], { model, models, scope }) => {
   // TODO: transaction, maybe?
@@ -8,7 +8,7 @@ const handler = async (records = [], { model, models, scope }) => {
   }
 }
 
-module.exports = async function (model, silent) {
+module.exports = async function (model, silent, dir = 'fixture') {
   const { _, fastGlob, getNdutConfig, aneka, importFrom } = this.ndut.helper
   const { getSchemaByName } = this.ndutDb.helper
   const schema = await getSchemaByName(model)
@@ -18,22 +18,22 @@ module.exports = async function (model, silent) {
   let base = schema.alias
   if (cfg.alias !== 'app') base = schema.alias.slice(cfg.alias.length + 1)
   // builtin
-  let files = await fastGlob(`${cfg.dir}/ndutDb/fixture/${base}.{json,jsonl}`)
+  let files = await fastGlob(`${cfg.dir}/ndutDb/${dir}/${base}.{json,jsonl}`)
   let overridden = false
   for (let f of files) {
-    const overrides = await fastGlob(`${appCfg.dir}/ndutDb/fixture/override/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
+    const overrides = await fastGlob(`${appCfg.dir}/ndutDb/${dir}/override/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
     if (overrides.length > 0) {
       f = overrides[0]
       overridden = true
     }
     await importFrom(f, handler, { handler: { model, models, scope: this } })
-    if (!silent) this.log.debug(`* Builtin fixture '${path.basename(f)}' loaded successfully`)
+    if (!silent) this.log.debug(`* Builtin ${dir} '${path.basename(f)}' loaded successfully`)
   }
   if (overridden) return
   // additional
-  files = await fastGlob(`${appCfg.dir}/ndutDb/fixture/extend/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
+  files = await fastGlob(`${appCfg.dir}/ndutDb/${dir}/extend/{${model},${_.kebabCase(model)}}.{json,jsonl}`)
   for (const f of files) {
     await importFrom(f, handler, { handler: { model, models, scope: this } })
-    if (!silent) this.log.debug(`* Fixture '${path.basename(f)}' loaded successfully`)
+    if (!silent) this.log.debug(`* ${_.upperFirst(dir)} '${path.basename(f)}' loaded successfully`)
   }
 }
