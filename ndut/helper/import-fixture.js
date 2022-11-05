@@ -16,7 +16,7 @@ const handler = async (records = [], { model, models, transformer, scope }) => {
   for (let r of records) {
     try {
       if (transRec) r = await transRec.call(scope, { model, models, data: records, record: r })
-      if (scope.ndutApi) await scope.ndutApi.helper.dbCall({ model, method: 'create', body: r })
+      if (scope.ndutApi) await scope.ndutApi.helper.create({ model, body: r })
       else await models[model].create(r)
     } catch (err) {
       console.log(r)
