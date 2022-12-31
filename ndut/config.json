@@ -3,5 +3,5 @@
   "nullOnBuild": false,
   "noFixture": false,
   "withSample": false,
-  "appModes": ["serve", "build"]
+  "appModes": ["serve", "build", "dump"]
 }

@@ -3,6 +3,7 @@ const collectSchemas = require('../lib/collect-schemas')
 const collectDatasources = require('../lib/collect-datasources')
 const buildModel = require('../lib/instance/build-model')
 const doBuild = require('../lib/build')
+const doDump = require('../lib/dump')
 // instance
 const builtIn = require('../lib/instance/built-in')
 const instanceHook = require('../lib/instance/hook')
@@ -31,6 +32,7 @@ module.exports = async function (options) {
     await buildModel.call(this, schema)
   }
   if (config.appMode === 'build') await doBuild.call(this, options)
+  if (config.appMode === 'dump') await doDump.call(this, options)
   // build memoryds
   const names = _.map(_.filter(schemas, { dataSource: 'memory' }), 'name')
   await ds.memory.automigrate(names)
