@@ -1,6 +1,6 @@
 {
   "name": "ndut-db",
-  "version": "0.7.14",
+  "version": "0.7.15",
   "description": "Datasource & Models for Ndut Framework",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

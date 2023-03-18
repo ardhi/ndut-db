@@ -25,7 +25,7 @@ const handler = async (records = [], { model, models, transformer, scope }) => {
   }
 }
 
-module.exports = async function (model, silent, dir = 'fixture') {
+module.exports = async function (model, silent, dir = 'fixture', extFiles = []) {
   const { _, fastGlob, getNdutConfig, aneka, importFrom } = this.ndut.helper
   const { getSchemaByName } = this.ndutDb.helper
   const schema = await getSchemaByName(model)
@@ -36,6 +36,9 @@ module.exports = async function (model, silent, dir = 'fixture') {
   if (cfg.alias !== 'app') base = schema.alias.slice(cfg.alias.length + 1)
   // builtin
   let files = await fastGlob(`${cfg.dir}/ndutDb/${dir}/${base}.{json,jsonl}`)
+  const extend = _.filter(extFiles, f => {
+    return path.basename(f) === `${cfg.alias}-${base}.json`
+  })
   let overridden = false
   let transformer
   try {
@@ -47,7 +50,7 @@ module.exports = async function (model, silent, dir = 'fixture') {
       f = overrides[0]
       overridden = true
     }
-    await importFrom(f, handler, { handler: { model, models, transformer, scope: this } })
+    await importFrom(f, handler, { handler: { model, models, transformer, scope: this }, extend })
     if (!silent) this.log.debug(`* Builtin ${dir} '${path.basename(f)}' loaded successfully`)
   }
   if (overridden) return
